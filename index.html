@@ -3,9 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayPal Live Transaction Dashboard</title>
+    <title>PayPal Live Integration Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #003087;
+            --secondary: #009cde;
+            --accent: #0070ba;
+            --success: #28a745;
+            --warning: #ffc439;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -17,7 +29,7 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             padding: 20px;
-            color: #333;
+            color: var(--dark);
         }
         
         .container {
@@ -30,10 +42,11 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px;
-            background: #003087;
+            background: var(--primary);
             color: white;
             border-radius: 10px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         .logo {
@@ -44,6 +57,7 @@
         
         .logo h1 {
             font-size: 24px;
+            font-weight: 600;
         }
         
         .logo-img {
@@ -54,25 +68,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #003087;
+            color: var(--primary);
             font-size: 24px;
             font-weight: bold;
         }
         
         .status {
-            background: #009cde;
+            background: var(--secondary);
             padding: 10px 20px;
             border-radius: 20px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .status.sandbox {
-            background: #ffc439;
-            color: #333;
+            background: var(--warning);
+            color: var(--dark);
         }
         
         .status.live {
-            background: #0070ba;
+            background: var(--success);
         }
         
         .dashboard {
@@ -86,6 +103,11 @@
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             padding: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
         }
         
         .card-full {
@@ -93,11 +115,13 @@
         }
         
         .card h2 {
-            color: #003087;
+            color: var(--primary);
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
         }
         
         .card h2 i {
@@ -112,14 +136,22 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
+            color: var(--dark);
         }
         
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 112, 186, 0.2);
         }
         
         .btn {
@@ -130,10 +162,14 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         .btn-primary {
-            background: #0070ba;
+            background: var(--accent);
             color: white;
         }
         
@@ -142,7 +178,7 @@
         }
         
         .btn-success {
-            background: #28a745;
+            background: var(--success);
             color: white;
         }
         
@@ -151,7 +187,7 @@
         }
         
         .btn-danger {
-            background: #dc3545;
+            background: var(--danger);
             color: white;
         }
         
@@ -160,8 +196,8 @@
         }
         
         .btn-test {
-            background: #ffc439;
-            color: #333;
+            background: var(--warning);
+            color: var(--dark);
         }
         
         .btn-test:hover {
@@ -172,6 +208,7 @@
             display: flex;
             gap: 15px;
             margin-top: 25px;
+            flex-wrap: wrap;
         }
         
         .transaction {
@@ -180,6 +217,11 @@
             align-items: center;
             padding: 15px;
             border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        
+        .transaction:hover {
+            background-color: #f9f9f9;
         }
         
         .transaction:last-child {
@@ -190,21 +232,31 @@
             flex: 1;
         }
         
+        .transaction-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .transaction-date {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
         .transaction-amount {
             font-weight: 600;
             font-size: 18px;
         }
         
         .transaction-success {
-            color: #28a745;
+            color: var(--success);
         }
         
         .transaction-failed {
-            color: #dc3545;
+            color: var(--danger);
         }
         
         .transaction-pending {
-            color: #ffc107;
+            color: var(--warning);
         }
         
         .progress-bar {
@@ -217,7 +269,7 @@
         
         .progress {
             height: 100%;
-            background: #0070ba;
+            background: var(--accent);
             border-radius: 4px;
             width: 0%;
             transition: width 0.5s ease;
@@ -232,18 +284,53 @@
         .progress-step {
             text-align: center;
             font-size: 14px;
-            color: #666;
+            color: var(--gray);
+            flex: 1;
+            position: relative;
+        }
+        
+        .progress-step:not(:last-child):after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #eee;
+            z-index: 1;
         }
         
         .progress-step.active {
-            color: #0070ba;
+            color: var(--accent);
             font-weight: 600;
+        }
+        
+        .progress-step .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #eee;
+            color: var(--gray);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-bottom: 5px;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .progress-step.active .step-number {
+            background: var(--accent);
+            color: white;
         }
         
         .alert {
             padding: 15px;
             border-radius: 6px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
         }
         
         .alert-success {
@@ -264,6 +351,12 @@
             border: 1px solid #bee5eb;
         }
         
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -272,22 +365,66 @@
         }
         
         .stat-card {
-            background: #f8f9fa;
+            background: var(--light);
             padding: 20px;
             border-radius: 8px;
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         
         .stat-value {
             font-size: 24px;
             font-weight: 700;
-            color: #003087;
+            color: var(--primary);
             margin: 10px 0;
         }
         
         .stat-label {
-            color: #666;
+            color: var(--gray);
             font-size: 14px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
         }
         
         @media (max-width: 768px) {
@@ -302,6 +439,21 @@
             .action-buttons {
                 flex-direction: column;
             }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .progress-step:not(:last-child):after {
+                display: none;
+            }
+            
+            .progress-steps {
+                flex-direction: column;
+                gap: 15px;
+            }
         }
     </style>
 </head>
@@ -310,36 +462,45 @@
         <header>
             <div class="logo">
                 <div class="logo-img">P</div>
-                <h1>PayPal Business Dashboard</h1>
+                <h1>PayPal Live Integration Dashboard</h1>
             </div>
-            <div class="status sandbox">SANDBOX MODE</div>
+            <div class="status live">
+                <i class="fas fa-check-circle"></i> LIVE MODE
+            </div>
         </header>
         
         <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> You have completed sandbox testing. Follow the steps below to go live with your PayPal business account.
+            <i class="fas fa-info-circle"></i> You are now in LIVE mode. All transactions will process real payments.
         </div>
         
         <div class="dashboard">
             <div class="card">
-                <h2><i class="fas fa-key"></i> API Credentials</h2>
+                <h2><i class="fas fa-key"></i> Live API Credentials</h2>
                 <div class="form-group">
                     <label for="client-id">Client ID</label>
-                    <input type="text" id="client-id" value="sb-client-id-12345" readonly>
+                    <input type="text" id="client-id" value="live-client-id-abc123" readonly>
                 </div>
                 <div class="form-group">
                     <label for="client-secret">Client Secret</label>
-                    <input type="password" id="client-secret" value="sb-secret-67890" readonly>
+                    <input type="password" id="client-secret" value="live-secret-def456" readonly>
                 </div>
-                <button class="btn btn-primary" id="switch-live">
-                    <i class="fas fa-exchange-alt"></i> Switch to Live Credentials
+                <div class="form-group">
+                    <label for="webhook">Webhook URL</label>
+                    <input type="text" id="webhook" value="https://mybusiness.com/paypal/webhook">
+                </div>
+                <button class="btn btn-primary">
+                    <i class="fas fa-sync-alt"></i> Refresh Credentials
+                </button>
+                <button class="btn btn-danger" id="show-modal">
+                    <i class="fas fa-exchange-alt"></i> Switch to Sandbox
                 </button>
             </div>
             
             <div class="card">
                 <h2><i class="fas fa-cogs"></i> Account Settings</h2>
                 <div class="form-group">
-                    <label for="webhook">Webhook URL</label>
-                    <input type="text" id="webhook" value="https://mybusiness.com/paypal/webhook">
+                    <label for="business-name">Business Name</label>
+                    <input type="text" id="business-name" value="My Business Inc.">
                 </div>
                 <div class="form-group">
                     <label for="currency">Default Currency</label>
@@ -351,38 +512,54 @@
                         <option>JPY - Japanese Yen</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="notifications">Notification Email</label>
+                    <input type="email" id="notifications" value="finance@mybusiness.com">
+                </div>
                 <button class="btn btn-primary">
                     <i class="fas fa-save"></i> Save Settings
                 </button>
             </div>
             
             <div class="card card-full">
-                <h2><i class="fas fa-list-check"></i> Go-Live Checklist</h2>
+                <h2><i class="fas fa-list-check"></i> Live Mode Checklist</h2>
                 <div class="progress-bar">
-                    <div class="progress" id="checklist-progress"></div>
+                    <div class="progress" id="checklist-progress" style="width: 75%"></div>
                 </div>
                 <div class="progress-steps">
-                    <div class="progress-step">Credentials</div>
-                    <div class="progress-step">Settings</div>
-                    <div class="progress-step">Test</div>
-                    <div class="progress-step">Monitor</div>
+                    <div class="progress-step active">
+                        <div class="step-number">1</div>
+                        <div>Credentials</div>
+                    </div>
+                    <div class="progress-step active">
+                        <div class="step-number">2</div>
+                        <div>Settings</div>
+                    </div>
+                    <div class="progress-step active">
+                        <div class="step-number">3</div>
+                        <div>Test</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-number">4</div>
+                        <div>Monitor</div>
+                    </div>
                 </div>
                 
                 <div class="form-group" style="margin-top: 25px;">
                     <label>
-                        <input type="checkbox" id="step1"> 
+                        <input type="checkbox" id="step1" checked> 
                         Obtain live API credentials from PayPal dashboard
                     </label>
                 </div>
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="step2"> 
+                        <input type="checkbox" id="step2" checked> 
                         Replace sandbox API keys with live ones in code
                     </label>
                 </div>
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="step3"> 
+                        <input type="checkbox" id="step3" checked> 
                         Verify business account information is correct
                     </label>
                 </div>
@@ -401,7 +578,10 @@
             </div>
             
             <div class="card">
-                <h2><i class="fas fa-money-check"></i> Test Transaction</h2>
+                <h2><i class="fas fa-money-check"></i> Live Transaction Test</h2>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> You are in LIVE mode. Transactions will use real money.
+                </div>
                 <div class="form-group">
                     <label for="amount">Amount</label>
                     <input type="number" id="amount" value="1.00" min="1.00" step="0.01">
@@ -414,6 +594,10 @@
                         <option>EUR</option>
                         <option>GBP</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" placeholder="Test transaction">
                 </div>
                 <button class="btn btn-test" id="test-btn">
                     <i class="fas fa-vial"></i> Test Live Transaction
@@ -429,46 +613,81 @@
                 <div class="stats">
                     <div class="stat-card">
                         <div class="stat-label">Successful Transactions</div>
-                        <div class="stat-value">0</div>
+                        <div class="stat-value">3</div>
+                        <div class="stat-change">+2 today</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Failed Transactions</div>
-                        <div class="stat-value">0</div>
+                        <div class="stat-value">1</div>
+                        <div class="stat-change">+0 today</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Revenue</div>
-                        <div class="stat-value">$0.00</div>
+                        <div class="stat-value">$48.50</div>
+                        <div class="stat-change">+$15.00 today</div>
                     </div>
                 </div>
                 
-                <button class="btn btn-primary" style="margin-top: 20px;">
-                    <i class="fas fa-sync-alt"></i> Refresh Metrics
-                </button>
+                <div class="action-buttons">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> Refresh Metrics
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-download"></i> Export Reports
+                    </button>
+                </div>
             </div>
             
             <div class="card card-full">
-                <h2><i class="fas fa-receipt"></i> Recent Transactions</h2>
+                <h2><i class="fas fa-receipt"></i> Recent Live Transactions</h2>
                 <div class="transaction">
                     <div class="transaction-details">
-                        <div>Test Transaction - Sandbox</div>
-                        <div class="transaction-date">Today, 10:23 AM</div>
+                        <div class="transaction-title">Customer Payment - John Doe</div>
+                        <div class="transaction-date">Today, 11:42 AM • Transaction ID: LIVE-7B92A8C1</div>
                     </div>
-                    <div class="transaction-amount transaction-success">$1.00 CAD</div>
+                    <div class="transaction-amount transaction-success">$12.99 CAD</div>
                 </div>
                 <div class="transaction">
                     <div class="transaction-details">
-                        <div>Test Transaction - Sandbox</div>
-                        <div class="transaction-date">Today, 09:47 AM</div>
+                        <div class="transaction-title">Customer Payment - Sarah Johnson</div>
+                        <div class="transaction-date">Today, 10:15 AM • Transaction ID: LIVE-4D83F1E9</div>
                     </div>
-                    <div class="transaction-amount transaction-success">$2.50 CAD</div>
+                    <div class="transaction-amount transaction-success">$2.01 CAD</div>
                 </div>
                 <div class="transaction">
                     <div class="transaction-details">
-                        <div>Test Transaction - Sandbox</div>
-                        <div class="transaction-date">Yesterday, 3:12 PM</div>
+                        <div class="transaction-title">Subscription Renewal - Robert Smith</div>
+                        <div class="transaction-date">Yesterday, 3:12 PM • Transaction ID: LIVE-9E21B5A3</div>
                     </div>
-                    <div class="transaction-amount transaction-failed">$5.00 CAD</div>
+                    <div class="transaction-amount transaction-success">$33.50 CAD</div>
                 </div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-title">Customer Payment - Failed</div>
+                        <div class="transaction-date">May 15, 9:27 AM • Transaction ID: LIVE-2C87F1D</div>
+                    </div>
+                    <div class="transaction-amount transaction-failed">$25.00 CAD</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="switch-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Switch to Sandbox Mode</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <p>Are you sure you want to switch back to Sandbox mode? This will disable live transactions and use test credentials.</p>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-danger" id="confirm-switch">
+                    <i class="fas fa-exchange-alt"></i> Switch to Sandbox
+                </button>
+                <button class="btn btn-primary" id="cancel-switch">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -477,10 +696,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             const checklistItems = document.querySelectorAll('input[type="checkbox"]');
             const progressBar = document.getElementById('checklist-progress');
-            const switchLiveBtn = document.getElementById('switch-live');
-            const statusIndicator = document.querySelector('.status');
             const testBtn = document.getElementById('test-btn');
             const testResult = document.getElementById('test-result');
+            const switchModal = document.getElementById('switch-modal');
+            const showModalBtn = document.getElementById('show-modal');
+            const closeModalBtn = document.querySelector('.close-modal');
+            const cancelSwitchBtn = document.getElementById('cancel-switch');
+            const confirmSwitchBtn = document.getElementById('confirm-switch');
             
             // Update progress bar
             function updateProgress() {
@@ -498,44 +720,67 @@
                 item.addEventListener('change', updateProgress);
             });
             
-            // Switch to live mode
-            switchLiveBtn.addEventListener('click', function() {
-                if (confirm("Are you sure you want to switch to LIVE mode? This will use real transactions.")) {
-                    statusIndicator.classList.remove('sandbox');
-                    statusIndicator.classList.add('live');
-                    statusIndicator.textContent = 'LIVE MODE';
-                    
-                    document.getElementById('client-id').value = 'live-client-id-abc123';
-                    document.getElementById('client-secret').value = 'live-secret-def456';
-                    
-                    const alert = document.createElement('div');
-                    alert.className = 'alert alert-warning';
-                    alert.innerHTML = '<i class="fas fa-exclamation-triangle"></i> You are now in LIVE mode. All transactions will use real money.';
-                    document.querySelector('.alert-info').after(alert);
-                }
-            });
-            
             // Test transaction
             testBtn.addEventListener('click', function() {
                 const amount = document.getElementById('amount').value;
                 const currency = document.getElementById('currency-test').value;
+                const description = document.getElementById('description').value || 'Test transaction';
                 
-                testResult.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin"></i> Processing test transaction...</div>';
+                testResult.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin"></i> Processing live transaction...</div>';
                 
                 // Simulate API call
                 setTimeout(() => {
-                    testResult.innerHTML = `
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle"></i> Test transaction successful!<br>
-                            $${amount} ${currency} has been processed.
-                        </div>
-                        <p><strong>Transaction ID:</strong> LIVE-${Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
-                        <p><strong>Note:</strong> This was a live transaction. Please issue a refund if this was only a test.</p>
-                        <button class="btn btn-danger" style="margin-top: 10px;">
-                            <i class="fas fa-undo"></i> Issue Refund
-                        </button>
-                    `;
+                    const success = Math.random() > 0.2; // 80% success rate
+                    
+                    if (success) {
+                        testResult.innerHTML = `
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i> Live transaction successful!<br>
+                                $${amount} ${currency} has been processed.
+                            </div>
+                            <p><strong>Description:</strong> ${description}</p>
+                            <p><strong>Transaction ID:</strong> LIVE-${Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
+                            <p><strong>Note:</strong> This was a live transaction with real money.</p>
+                            <button class="btn btn-danger" style="margin-top: 10px;">
+                                <i class="fas fa-undo"></i> Issue Refund
+                            </button>
+                        `;
+                    } else {
+                        testResult.innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle"></i> Transaction failed!<br>
+                                Please check your account settings and try again.
+                            </div>
+                            <p><strong>Description:</strong> ${description}</p>
+                            <p><strong>Error:</strong> Insufficient funds</p>
+                        `;
+                    }
                 }, 2000);
+            });
+            
+            // Modal functionality
+            showModalBtn.addEventListener('click', function() {
+                switchModal.style.display = 'flex';
+            });
+            
+            closeModalBtn.addEventListener('click', function() {
+                switchModal.style.display = 'none';
+            });
+            
+            cancelSwitchBtn.addEventListener('click', function() {
+                switchModal.style.display = 'none';
+            });
+            
+            confirmSwitchBtn.addEventListener('click', function() {
+                alert('Switching to Sandbox mode...');
+                switchModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === switchModal) {
+                    switchModal.style.display = 'none';
+                }
             });
         });
     </script>
