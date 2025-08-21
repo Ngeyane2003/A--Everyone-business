@@ -22,7 +22,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
@@ -222,12 +222,81 @@
             grid-column: 1 / -1;
         }
         
+        .transactions-table {
+            grid-column: 1 / -1;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #003087;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .status-completed {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .transaction-id {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .summary-card h3 {
+            color: #003087;
+            margin-bottom: 10px;
+        }
+        
+        .summary-card .amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
             }
             
             .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-cards {
                 grid-template-columns: 1fr;
             }
         }
@@ -239,6 +308,25 @@
             <h1>PayPal Sandbox Transaction Viewer</h1>
             <p>View and manage your test transactions from the "John" sandbox account</p>
         </header>
+        
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Total Balance</h3>
+                <div class="amount">$5,618.97 USD</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Transactions</h3>
+                <div class="amount">9</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Revenue</h3>
+                <div class="amount">$7,082.00 USD</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Fees</h3>
+                <div class="amount">$66.43 USD</div>
+            </div>
+        </div>
         
         <div class="dashboard">
             <div class="card account-info">
@@ -277,47 +365,115 @@
                     <h3>Account Type</h3>
                     <p>Personal</p>
                 </div>
+                <div class="info-item">
+                    <h3>Phone</h3>
+                    <p>2754305069</p>
+                </div>
             </div>
             
-            <div class="card">
+            <div class="card transactions-table">
                 <h2><i class="fas fa-exchange-alt"></i> Recent Test Transactions</h2>
                 
-                <div class="transaction">
-                    <div class="transaction-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="transaction-details">
-                        <div class="transaction-title">Learn & Earn AI - Starter Package</div>
-                        <div class="transaction-date">August 21, 2023 - 10:30 AM</div>
-                    </div>
-                    <div class="transaction-amount">$49.00</div>
-                </div>
-                
-                <div class="transaction">
-                    <div class="transaction-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="transaction-details">
-                        <div class="transaction-title">Learn & Earn AI - Advanced Package</div>
-                        <div class="transaction-date">August 20, 2023 - 2:15 PM</div>
-                    </div>
-                    <div class="transaction-amount">$129.00</div>
-                </div>
-                
-                <div class="transaction">
-                    <div class="transaction-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="transaction-details">
-                        <div class="transaction-title">Learn & Earn AI - Premium Bundle</div>
-                        <div class="transaction-date">August 19, 2023 - 4:45 PM</div>
-                    </div>
-                    <div class="transaction-amount">$299.00</div>
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Transaction ID</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Gross</th>
+                            <th>Fee</th>
+                            <th>Net</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025/08/21, 01:16</td>
+                            <td class="transaction-id">98Y21712G9664950R</td>
+                            <td>Payment from John Doe</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$597.00 USD</td>
+                            <td>$20.60 USD</td>
+                            <td>$576.40 USD</td>
+                        </tr>
+                        <tr>
+                            <td>2025/08/21, 01:15</td>
+                            <td class="transaction-id">1XA178010G0851516</td>
+                            <td>Payment from John Doe</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$397.00 USD</td>
+                            <td>$13.80 USD</td>
+                            <td>$383.20 USD</td>
+                        </tr>
+                        <tr>
+                            <td>2025/08/21, 01:14</td>
+                            <td class="transaction-id">05M05539C1404742J</td>
+                            <td>Payment from John Doe</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$247.00 USD</td>
+                            <td>$8.70 USD</td>
+                            <td>$238.30 USD</td>
+                        </tr>
+                        <tr>
+                            <td>2025/08/21, 01:11</td>
+                            <td class="transaction-id">79M992243W186522F</td>
+                            <td>Payment from John Doe</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$197.00 USD</td>
+                            <td>$7.00 USD</td>
+                            <td>$190.00 USD</td>
+                        </tr>
+                        <tr>
+                            <td>2025/08/21, 00:39</td>
+                            <td class="transaction-id">0MC59575R0738433C</td>
+                            <td>Payment from John Doe</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$197.00 USD</td>
+                            <td>$7.00 USD</td>
+                            <td>$190.00 USD</td>
+                        </tr>
+                        <tr>
+                            <td>2025/08/21, 00:38</td>
+                            <td class="transaction-id">74A036070D183903H</td>
+                            <td>Payment from John Doe</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$247.00 USD</td>
+                            <td>$8.70 USD</td>
+                            <td>$238.30 USD</td>
+                        </tr>
+                        <tr>
+                            <td>2025/08/21, 00:34</td>
+                            <td class="transaction-id">2BP32217AC854802G</td>
+                            <td>Payment from John Doe</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$197.00 USD</td>
+                            <td>$7.00 USD</td>
+                            <td>$190.00 USD</td>
+                        </tr>
+                        <tr>
+                            <td>2025/08/20, 23:47</td>
+                            <td class="transaction-id">49224030LR6384317</td>
+                            <td>Payment from John Doe</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$1.00 USD</td>
+                            <td>$0.33 USD</td>
+                            <td>$0.67 USD</td>
+                        </tr>
+                        <tr>
+                            <td>2025/07/23, 20:29</td>
+                            <td class="transaction-id">6F56530901944203B</td>
+                            <td>Transfer from PayPal</td>
+                            <td class="status-completed">Completed</td>
+                            <td>$5,000.00 USD</td>
+                            <td>$0.00 USD</td>
+                            <td>$5,000.00 USD</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             
             <div class="card instructions">
-                <h2><i class="fas fa-list-ol"></i> How to View Transactions</h2>
+                <h2><i class="fas fa-list-ol"></i> How to View Transactions in PayPal</h2>
                 
                 <div class="step">
                     <div class="step-number">1</div>
@@ -391,6 +547,47 @@
             dateElement.textContent = `Page generated on ${dateString}`;
             
             document.querySelector('.container').appendChild(dateElement);
+            
+            // Add sorting functionality to the table
+            const table = document.querySelector('table');
+            const headers = table.querySelectorAll('th');
+            
+            headers.forEach((header, index) => {
+                header.style.cursor = 'pointer';
+                header.addEventListener('click', () => {
+                    sortTable(index);
+                });
+            });
+            
+            function sortTable(column) {
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                
+                const isNumeric = column === 4 || column === 5 || column === 6;
+                
+                rows.sort((a, b) => {
+                    let aValue = a.cells[column].textContent;
+                    let bValue = b.cells[column].textContent;
+                    
+                    if (isNumeric) {
+                        aValue = parseFloat(aValue.replace(/[^0-9.]/g, ''));
+                        bValue = parseFloat(bValue.replace(/[^0-9.]/g, ''));
+                        return aValue - bValue;
+                    } else {
+                        return aValue.localeCompare(bValue);
+                    }
+                });
+                
+                // Remove existing rows
+                while (tbody.firstChild) {
+                    tbody.removeChild(tbody.firstChild);
+                }
+                
+                // Add sorted rows
+                rows.forEach(row => {
+                    tbody.appendChild(row);
+                });
+            }
         });
     </script>
 </body>
