@@ -3,304 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayPal Live Transaction Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>PayPal Integration Troubleshooting</title>
     <style>
+        :root {
+            --primary: #003087;
+            --secondary: #0070ba;
+            --accent: #7aa2ff;
+            --light: #f5f7fa;
+            --dark: #0b0f19;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc3545;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text: #2d3748;
+            --muted: #718096;
+        }
+        
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text);
+            line-height: 1.6;
             min-height: 100vh;
             padding: 20px;
-            color: #333;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
         
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: #003087;
+            background: var(--primary);
             color: white;
-            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: var(--primary);
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
         }
         
-        .logo {
+        h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .issue-card {
+            border-left: 4px solid var(--primary);
+        }
+        
+        .solution-card {
+            border-left: 4px solid var(--success);
+        }
+        
+        .step {
             display: flex;
-            align-items: center;
-            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-start;
         }
         
-        .logo h1 {
-            font-size: 24px;
-        }
-        
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            background: white;
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #003087;
-            font-size: 24px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .code {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+        
+        .warning {
+            background: #fffaf0;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .success {
+            background: #f0fff4;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .checklist {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        
+        .checklist li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .checklist li::before {
+            content: "✓";
+            color: var(--success);
+            position: absolute;
+            left: -20px;
             font-weight: bold;
         }
         
-        .status {
-            background: #009cde;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-        
-        .status.sandbox {
-            background: #ffc439;
-            color: #333;
-        }
-        
-        .status.live {
-            background: #0070ba;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .paypal-setup {
+            background: #f0f6ff;
+            border-radius: 12px;
             padding: 25px;
-        }
-        
-        .card-full {
-            grid-column: 1 / -1;
-        }
-        
-        .card h2 {
-            color: #003087;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .card h2 i {
-            font-size: 1.2em;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
+            margin: 30px 0;
         }
         
         .btn {
-            padding: 12px 25px;
+            background: var(--secondary);
+            color: white;
+            padding: 14px 26px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-            background: #0070ba;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #005ea6;
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #218838;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c82333;
-        }
-        
-        .btn-test {
-            background: #ffc439;
-            color: #333;
-        }
-        
-        .btn-test:hover {
-            background: #e6b035;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-        }
-        
-        .transaction {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .transaction:last-child {
-            border-bottom: none;
-        }
-        
-        .transaction-details {
-            flex: 1;
-        }
-        
-        .transaction-amount {
-            font-weight: 600;
-            font-size: 18px;
-        }
-        
-        .transaction-success {
-            color: #28a745;
-        }
-        
-        .transaction-failed {
-            color: #dc3545;
-        }
-        
-        .transaction-pending {
-            color: #ffc107;
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background: #eee;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 15px 0;
-        }
-        
-        .progress {
-            height: 100%;
-            background: #0070ba;
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        .progress-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-        
-        .progress-step {
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .progress-step.active {
-            color: #0070ba;
-            font-weight: 600;
-        }
-        
-        .alert {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-        
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
-        }
-        
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .stat-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #003087;
+            transition: all 0.3s;
             margin: 10px 0;
         }
         
-        .stat-label {
-            color: #666;
-            font-size: 14px;
+        .btn:hover {
+            background: #005a9e;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #f7fafc;
+            color: var(--muted);
+            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
+            .container {
+                border-radius: 0;
             }
             
-            .stats {
-                grid-template-columns: 1fr;
+            header {
+                padding: 20px;
             }
             
-            .action-buttons {
-                flex-direction: column;
+            .content {
+                padding: 20px;
             }
         }
     </style>
@@ -308,236 +225,274 @@
 <body>
     <div class="container">
         <header>
-            <div class="logo">
-                <div class="logo-img">P</div>
-                <h1>PayPal Business Dashboard</h1>
-            </div>
-            <div class="status sandbox">SANDBOX MODE</div>
+            <h1>PayPal Integration Troubleshooting</h1>
+            <p>Fix common issues with your PayPal integration</p>
         </header>
         
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> You have completed sandbox testing. Follow the steps below to go live with your PayPal business account.
+        <div class="content">
+            <div class="section">
+                <h2>Common PayPal Integration Issues</h2>
+                
+                <div class="card issue-card">
+                    <h3>Buttons Not Appearing</h3>
+                    <p>If your PayPal buttons aren't showing up at all, it's usually due to one of these issues:</p>
+                    <ul class="checklist">
+                        <li>Incorrect Client ID format or value</li>
+                        <li>JavaScript errors on the page</li>
+                        <li>PayPal SDK not loading properly</li>
+                        <li>Container element not existing when script runs</li>
+                    </ul>
+                </div>
+                
+                <div class="card issue-card">
+                    <h3>Buttons Appear But Don't Work</h3>
+                    <p>If buttons appear but nothing happens when clicked:</p>
+                    <ul class="checklist">
+                        <li>Server endpoints not set up correctly</li>
+                        <li>CORS issues with API requests</li>
+                        <li>Incorrect API response format</li>
+                    </ul>
+                </div>
+                
+                <div class="card issue-card">
+                    <h3>Payment Fails</h3>
+                    <p>If payments are failing during processing:</p>
+                    <ul class="checklist">
+                        <li>Server-side validation errors</li>
+                        <li>Currency or amount format issues</li>
+                        <li>PayPal account configuration problems</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Step-by-Step Troubleshooting</h2>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h3>Check Browser Console for Errors</h3>
+                        <p>Open your browser's developer tools (F12) and look for any JavaScript errors in the Console tab.</p>
+                        <div class="code">// Common errors to look for:
+- "PayPal is not defined" (SDK loading issue)
+- "Cannot read property 'Buttons' of undefined"
+- CORS errors related to API calls</div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h3>Verify Your Client ID</h3>
+                        <p>Ensure you're using the correct Client ID for your environment (sandbox vs live).</p>
+                        <div class="code">// In your HTML head:
+&lt;script 
+  src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"&gt;
+&lt;/script&gt;</div>
+                        <p class="warning">Make sure to replace YOUR_CLIENT_ID with your actual live client ID from the PayPal Developer Dashboard.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h3>Check Server Endpoints</h3>
+                        <p>Your PayPal buttons are configured to call serverless functions at these endpoints:</p>
+                        <div class="code">// Create order endpoint
+POST /api/create-order
+
+// Capture order endpoint  
+POST /api/capture-order</div>
+                        <p>Make sure these endpoints exist on your server and return the expected JSON responses.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <h3>Test with a Simple Example</h3>
+                        <p>Try a basic PayPal integration first to isolate the issue:</p>
+                        <div class="code">paypal.Buttons({
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: '1.00'
+        }
+      }]
+    });
+  },
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(function(details) {
+      alert('Transaction completed by ' + details.payer.name.given_name);
+    });
+  }
+}).render('#paypal-button-container');</div>
+                        <p>If this works, your issue is with the server integration.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Vercel Serverless Functions</h2>
+                
+                <div class="paypal-setup">
+                    <h3>Setting Up API Endpoints on Vercel</h3>
+                    <p>For your PayPal integration to work, you need to create serverless functions:</p>
+                    
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h3>Create API Directory</h3>
+                            <p>In your Vercel project, create an <code>/api</code> directory at the root level.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h3>Create Order Endpoint</h3>
+                            <p>Create <code>/api/create-order.js</code>:</p>
+                            <div class="code">const paypal = require('@paypal/checkout-server-sdk');
+
+// Set up PayPal environment
+const environment = new paypal.core.SandboxEnvironment(
+  process.env.PAYPAL_CLIENT_ID, 
+  process.env.PAYPAL_CLIENT_SECRET
+);
+const client = new paypal.core.PayPalHttpClient(environment);
+
+module.exports = async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).end();
+  }
+  
+  try {
+    const request = new paypal.orders.OrdersCreateRequest();
+    request.requestBody({
+      intent: 'CAPTURE',
+      purchase_units: [{
+        amount: {
+          currency_code: 'USD',
+          value: req.body.value || '1.00'
+        },
+        description: req.body.description || 'Test Payment'
+      }]
+    });
+    
+    const order = await client.execute(request);
+    res.status(200).json({ id: order.result.id });
+  } catch (error) {
+    console.error('Create order error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h3>Capture Order Endpoint</h3>
+                            <p>Create <code>/api/capture-order.js</code>:</p>
+                            <div class="code">const paypal = require('@paypal/checkout-server-sdk');
+
+// Set up PayPal environment (same as above)
+const environment = new paypal.core.SandboxEnvironment(
+  process.env.PAYPAL_CLIENT_ID, 
+  process.env.PAYPAL_CLIENT_SECRET
+);
+const client = new paypal.core.PayPalHttpClient(environment);
+
+module.exports = async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).end();
+  }
+  
+  try {
+    const { orderID } = req.body;
+    const request = new paypal.orders.OrdersCaptureRequest(orderID);
+    request.requestBody({});
+    
+    const capture = await client.execute(request);
+    res.status(200).json(capture.result);
+  } catch (error) {
+    console.error('Capture order error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <h3>Set Environment Variables</h3>
+                            <p>In your Vercel project settings, set these environment variables:</p>
+                            <div class="code">PAYPAL_CLIENT_ID=your_client_id_here
+PAYPAL_CLIENT_SECRET=your_client_secret_here</div>
+                            <p class="warning">Never commit your client secret to version control! Always use environment variables.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Testing Your Integration</h2>
+                
+                <div class="card solution-card">
+                    <h3>Test with the PayPal Sandbox</h3>
+                    <p>Always test with sandbox credentials before going live:</p>
+                    <ul class="checklist">
+                        <li>Use sandbox client ID for testing</li>
+                        <li>Create test buyer and merchant accounts in PayPal Developer Dashboard</li>
+                        <li>Test successful and failed payment scenarios</li>
+                    </ul>
+                    <a href="https://developer.paypal.com/developer/accounts/" class="btn" target="_blank">Create Sandbox Accounts</a>
+                </div>
+                
+                <div class="card solution-card">
+                    <h3>Verify Server Responses</h3>
+                    <p>Check that your server endpoints return the correct responses:</p>
+                    <div class="code">// create-order should return: { id: "ORDER_ID" }
+// capture-order should return: { id: "CAPTURE_ID", status: "COMPLETED" }</div>
+                    <p>Use browser dev tools Network tab to inspect API calls.</p>
+                </div>
+                
+                <div class="card solution-card">
+                    <h3>Check Payment Status in PayPal Dashboard</h3>
+                    <p>After a test transaction, verify it appears in your PayPal dashboard:</p>
+                    <ul class="checklist">
+                        <li>Sandbox transactions appear in the developer dashboard</li>
+                        <li>Live transactions appear in your business account</li>
+                        <li>Look for any error codes or declined transactions</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Additional Resources</h2>
+                
+                <div class="card">
+                    <h3>Helpful Links</h3>
+                    <p>Use these resources to troubleshoot further:</p>
+                    <ul class="checklist">
+                        <li><a href="https://developer.paypal.com/docs/checkout/" target="_blank">PayPal Checkout Documentation</a></li>
+                        <li><a href="https://vercel.com/docs/serverless-functions" target="_blank">Vercel Serverless Functions Docs</a></li>
+                        <li><a href="https://developer.paypal.com/tools/sandbox/" target="_blank">PayPal Sandbox Guide</a></li>
+                        <li><a href="https://developer.paypal.com/developer/applications/" target="_blank">PayPal App Dashboard</a></li>
+                    </ul>
+                    <div class="success">
+                        <p><strong>Pro Tip:</strong> Join the <a href="https://www.paypal-community.com/t5/Developer/bd-p/9" target="_blank">PayPal Developer Community</a> for help from other developers and PayPal staff.</p>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div class="dashboard">
-            <div class="card">
-                <h2><i class="fas fa-key"></i> API Credentials</h2>
-                <div class="form-group">
-                    <label for="client-id">Client ID</label>
-                    <input type="text" id="client-id" value="sb-client-id-12345" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="client-secret">Client Secret</label>
-                    <input type="password" id="client-secret" value="sb-secret-67890" readonly>
-                </div>
-                <button class="btn btn-primary" id="switch-live">
-                    <i class="fas fa-exchange-alt"></i> Switch to Live Credentials
-                </button>
-            </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-cogs"></i> Account Settings</h2>
-                <div class="form-group">
-                    <label for="webhook">Webhook URL</label>
-                    <input type="text" id="webhook" value="https://mybusiness.com/paypal/webhook">
-                </div>
-                <div class="form-group">
-                    <label for="currency">Default Currency</label>
-                    <select id="currency">
-                        <option>USD - US Dollar</option>
-                        <option>EUR - Euro</option>
-                        <option>GBP - British Pound</option>
-                        <option selected>CAD - Canadian Dollar</option>
-                        <option>JPY - Japanese Yen</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary">
-                    <i class="fas fa-save"></i> Save Settings
-                </button>
-            </div>
-            
-            <div class="card card-full">
-                <h2><i class="fas fa-list-check"></i> Go-Live Checklist</h2>
-                <div class="progress-bar">
-                    <div class="progress" id="checklist-progress"></div>
-                </div>
-                <div class="progress-steps">
-                    <div class="progress-step">Credentials</div>
-                    <div class="progress-step">Settings</div>
-                    <div class="progress-step">Test</div>
-                    <div class="progress-step">Monitor</div>
-                </div>
-                
-                <div class="form-group" style="margin-top: 25px;">
-                    <label>
-                        <input type="checkbox" id="step1"> 
-                        Obtain live API credentials from PayPal dashboard
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="step2"> 
-                        Replace sandbox API keys with live ones in code
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="step3"> 
-                        Verify business account information is correct
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="step4"> 
-                        Confirm bank account and email are linked
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="step5"> 
-                        Set up transaction logging and monitoring
-                    </label>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-money-check"></i> Test Transaction</h2>
-                <div class="form-group">
-                    <label for="amount">Amount</label>
-                    <input type="number" id="amount" value="1.00" min="1.00" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label for="currency-test">Currency</label>
-                    <select id="currency-test">
-                        <option selected>CAD</option>
-                        <option>USD</option>
-                        <option>EUR</option>
-                        <option>GBP</option>
-                    </select>
-                </div>
-                <button class="btn btn-test" id="test-btn">
-                    <i class="fas fa-vial"></i> Test Live Transaction
-                </button>
-                
-                <div id="test-result" style="margin-top: 20px;"></div>
-            </div>
-            
-            <div class="card">
-                <h2><i class="fas fa-chart-line"></i> Live Monitoring</h2>
-                <p>Monitor your transactions after going live:</p>
-                
-                <div class="stats">
-                    <div class="stat-card">
-                        <div class="stat-label">Successful Transactions</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Failed Transactions</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Revenue</div>
-                        <div class="stat-value">$0.00</div>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" style="margin-top: 20px;">
-                    <i class="fas fa-sync-alt"></i> Refresh Metrics
-                </button>
-            </div>
-            
-            <div class="card card-full">
-                <h2><i class="fas fa-receipt"></i> Recent Transactions</h2>
-                <div class="transaction">
-                    <div class="transaction-details">
-                        <div>Test Transaction - Sandbox</div>
-                        <div class="transaction-date">Today, 10:23 AM</div>
-                    </div>
-                    <div class="transaction-amount transaction-success">$1.00 CAD</div>
-                </div>
-                <div class="transaction">
-                    <div class="transaction-details">
-                        <div>Test Transaction - Sandbox</div>
-                        <div class="transaction-date">Today, 09:47 AM</div>
-                    </div>
-                    <div class="transaction-amount transaction-success">$2.50 CAD</div>
-                </div>
-                <div class="transaction">
-                    <div class="transaction-details">
-                        <div>Test Transaction - Sandbox</div>
-                        <div class="transaction-date">Yesterday, 3:12 PM</div>
-                    </div>
-                    <div class="transaction-amount transaction-failed">$5.00 CAD</div>
-                </div>
-            </div>
-        </div>
+        <footer>
+            <p>Need more help? Check the PayPal Developer documentation or contact PayPal support.</p>
+            <p>Remember to always test with sandbox credentials before processing live payments.</p>
+        </footer>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checklistItems = document.querySelectorAll('input[type="checkbox"]');
-            const progressBar = document.getElementById('checklist-progress');
-            const switchLiveBtn = document.getElementById('switch-live');
-            const statusIndicator = document.querySelector('.status');
-            const testBtn = document.getElementById('test-btn');
-            const testResult = document.getElementById('test-result');
-            
-            // Update progress bar
-            function updateProgress() {
-                const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
-                const total = checklistItems.length;
-                const progress = (checked / total) * 100;
-                progressBar.style.width = `${progress}%`;
-            }
-            
-            // Initialize progress
-            updateProgress();
-            
-            // Add event listeners to checklist items
-            checklistItems.forEach(item => {
-                item.addEventListener('change', updateProgress);
-            });
-            
-            // Switch to live mode
-            switchLiveBtn.addEventListener('click', function() {
-                if (confirm("Are you sure you want to switch to LIVE mode? This will use real transactions.")) {
-                    statusIndicator.classList.remove('sandbox');
-                    statusIndicator.classList.add('live');
-                    statusIndicator.textContent = 'LIVE MODE';
-                    
-                    document.getElementById('client-id').value = 'live-client-id-abc123';
-                    document.getElementById('client-secret').value = 'live-secret-def456';
-                    
-                    const alert = document.createElement('div');
-                    alert.className = 'alert alert-warning';
-                    alert.innerHTML = '<i class="fas fa-exclamation-triangle"></i> You are now in LIVE mode. All transactions will use real money.';
-                    document.querySelector('.alert-info').after(alert);
-                }
-            });
-            
-            // Test transaction
-            testBtn.addEventListener('click', function() {
-                const amount = document.getElementById('amount').value;
-                const currency = document.getElementById('currency-test').value;
-                
-                testResult.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin"></i> Processing test transaction...</div>';
-                
-                // Simulate API call
-                setTimeout(() => {
-                    testResult.innerHTML = `
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle"></i> Test transaction successful!<br>
-                            $${amount} ${currency} has been processed.
-                        </div>
-                        <p><strong>Transaction ID:</strong> LIVE-${Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
-                        <p><strong>Note:</strong> This was a live transaction. Please issue a refund if this was only a test.</p>
-                        <button class="btn btn-danger" style="margin-top: 10px;">
-                            <i class="fas fa-undo"></i> Issue Refund
-                        </button>
-                    `;
-                }, 2000);
-            });
-        });
-    </script>
 </body>
 </html>
